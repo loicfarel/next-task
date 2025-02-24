@@ -9,6 +9,7 @@ import { useTasks } from "@/app/hooks/useTasks";
 
 import { Label } from "@/components/ui/label";
 import { TaskStatus } from "@/app/types/task";
+import CategorySelect from "@/app/components/CategorySelect";
 
 export default function CreateTask() {
   const { addTask } = useTasks();
@@ -61,13 +62,12 @@ export default function CreateTask() {
         </div>
         <div className="grid w-full  items-center gap-1.5">
           <Label htmlFor="category">Catégorie</Label>
-          <Input
-            name="category"
-            placeholder="Catégorie"
-            onChange={handleChange}
-            required
+          <CategorySelect
+            value={task.category}
+            onChange={(category) => setTask({ ...task, category })}
           />
         </div>
+
         <div className="grid w-full  items-center gap-1.5">
           <Label htmlFor="content">Contenu</Label>
           <Textarea
@@ -77,26 +77,6 @@ export default function CreateTask() {
             required
           />
         </div>
-
-        {/* <Select
-          defaultValue="pending"
-          name="status"
-          onValueChange={(e) => setTask({ ...task, status: e as TaskStatus })}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Status</SelectLabel>
-              {optionStatus.map((status) => (
-                <SelectItem key={status.value} value={status.value}>
-                  {status.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select> */}
         <div className="">
           <div className="flex w-full gap-2">
             <div className="grid flex-1 items-center gap-1.5">
