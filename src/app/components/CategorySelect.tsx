@@ -45,9 +45,9 @@ export default function CategorySelect({
       const updatedCategories = [...categories, searchTerm];
       setCategories(updatedCategories);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedCategories));
-      setOpen(false); // Fermer le select après ajout
+      setOpen(false);
       setTimeout(() => {
-        onChange(searchTerm); // Sélectionner la nouvelle catégorie
+        onChange(searchTerm);
       }, 50);
       setSearchTerm("");
       setOpen(false);
