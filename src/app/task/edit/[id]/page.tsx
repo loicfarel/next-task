@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { optionStatus, TaskStatus } from "@/app/types/task";
+import CategorySelect from "@/app/components/CategorySelect";
 
 export default function EditTask() {
   const { tasks, updateTask } = useTasks();
@@ -77,12 +78,9 @@ export default function EditTask() {
         </div>
         <div className="grid w-full  items-center gap-1.5">
           <Label htmlFor="category">Catégorie</Label>
-          <Input
-            name="category"
-            placeholder="Catégorie"
+          <CategorySelect
             value={task.category}
-            onChange={handleChange}
-            required
+            onChange={(category) => setTask({ ...task, category })}
           />
         </div>
         <div className="grid w-full items-center gap-1.5">
