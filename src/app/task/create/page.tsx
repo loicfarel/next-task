@@ -6,20 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { useTasks } from "@/app/hooks/useTasks";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { Label } from "@/components/ui/label";
-import { optionCategories, optionStatus, TaskStatus } from "@/app/types/task";
+import { TaskStatus } from "@/app/types/task";
 
 export default function CreateTask() {
   const { addTask } = useTasks();
+  const [correctPeriod, setCorrectPeriod] = useState(false);
   const router = useRouter();
 
   const [task, setTask] = useState({
@@ -39,6 +32,10 @@ export default function CreateTask() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (new Date(task.startDate) > new Date(task.endDate)) {
+      setCorrectPeriod(true);
+      return;
+    }
     if (!task.title || !task.content) return;
 
     addTask({
@@ -62,25 +59,15 @@ export default function CreateTask() {
             required
           />
         </div>
-        <Select
-          defaultValue="CATÉGORIE 1"
-          name="category"
-          onValueChange={(e) => setTask({ ...task, category: e })}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Catégorie" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Catégorie</SelectLabel>
-              {optionCategories.map((status) => (
-                <SelectItem key={status} value={status}>
-                  {status}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <div className="grid w-full  items-center gap-1.5">
+          <Label htmlFor="category">Catégorie</Label>
+          <Input
+            name="category"
+            placeholder="Catégorie"
+            onChange={handleChange}
+            required
+          />
+        </div>
         <div className="grid w-full  items-center gap-1.5">
           <Label htmlFor="content">Contenu</Label>
           <Textarea
@@ -91,7 +78,7 @@ export default function CreateTask() {
           />
         </div>
 
-        <Select
+        {/* <Select
           defaultValue="pending"
           name="status"
           onValueChange={(e) => setTask({ ...task, status: e as TaskStatus })}
@@ -109,28 +96,34 @@ export default function CreateTask() {
               ))}
             </SelectGroup>
           </SelectContent>
-        </Select>
-        <div className="flex w-full gap-2">
-          <div className="grid flex-1 items-center gap-1.5">
-            <Label htmlFor="startDate">Date début</Label>
-            <input
-              type="date"
-              name="startDate"
-              onChange={handleChange}
-              className="border px-2 py-1 rounded-sm"
-              required
-            />
+        </Select> */}
+        <div className="">
+          <div className="flex w-full gap-2">
+            <div className="grid flex-1 items-center gap-1.5">
+              <Label htmlFor="startDate">Date début</Label>
+              <input
+                type="date"
+                name="startDate"
+                onChange={handleChange}
+                className="border px-2 py-1 rounded-sm"
+                required
+              />
+            </div>
+            <div className="grid flex-1 items-center gap-1.5">
+              <Label htmlFor="endDate">Date fin</Label>
+              <input
+                type="date"
+                name="endDate"
+                onChange={handleChange}
+                className="border px-2 py-1 rounded-sm"
+                required
+              />
+            </div>
           </div>
-          <div className="grid flex-1 items-center gap-1.5">
-            <Label htmlFor="endDate">Date fin</Label>
-            <input
-              type="date"
-              name="endDate"
-              onChange={handleChange}
-              className="border px-2 py-1 rounded-sm"
-              required
-            />
-          </div>
+          <p className="text-red-500 py-1 text-sm">
+            {correctPeriod &&
+              "La date de fin doit etre superieur a la date de debut"}
+          </p>
         </div>
         <Button type="submit">Créer</Button>
       </form>

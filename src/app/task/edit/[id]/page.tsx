@@ -16,10 +16,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { optionCategories, optionStatus, TaskStatus } from "@/app/types/task";
+import { optionStatus, TaskStatus } from "@/app/types/task";
 
 export default function EditTask() {
   const { tasks, updateTask } = useTasks();
+  const [correctPeriod, setCorrectPeriod] = useState(false);
   const router = useRouter();
   const { id } = useParams();
 
@@ -50,6 +51,10 @@ export default function EditTask() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (new Date(task.startDate) > new Date(task.endDate)) {
+      setCorrectPeriod(true);
+      return;
+    }
     if (!task.title || !task.content) return;
     updateTask(task);
     router.push("/");
@@ -70,25 +75,16 @@ export default function EditTask() {
             required
           />
         </div>
-        <Select
-          value={task.category}
-          name="category"
-          onValueChange={(e) => setTask({ ...task, category: e })}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Catégorie" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Catégorie</SelectLabel>
-              {optionCategories.map((status) => (
-                <SelectItem key={status} value={status}>
-                  {status}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <div className="grid w-full  items-center gap-1.5">
+          <Label htmlFor="category">Catégorie</Label>
+          <Input
+            name="category"
+            placeholder="Catégorie"
+            value={task.category}
+            onChange={handleChange}
+            required
+          />
+        </div>
         <div className="grid w-full items-center gap-1.5">
           <Label htmlFor="content">Contenu</Label>
           <Textarea
@@ -119,29 +115,35 @@ export default function EditTask() {
             </SelectGroup>
           </SelectContent>
         </Select>
-        <div className="flex w-full gap-2">
-          <div className="grid flex-1 items-center gap-1.5">
-            <Label htmlFor="startDate">Date début</Label>
-            <input
-              type="date"
-              name="startDate"
-              value={task.startDate}
-              onChange={handleChange}
-              className="border px-2 py-1 rounded-sm"
-              required
-            />
+        <div className="">
+          <div className="flex w-full gap-2">
+            <div className="grid flex-1 items-center gap-1.5">
+              <Label htmlFor="startDate">Date début</Label>
+              <input
+                type="date"
+                name="startDate"
+                value={task.startDate}
+                onChange={handleChange}
+                className="border px-2 py-1 rounded-sm"
+                required
+              />
+            </div>
+            <div className="grid flex-1 items-center gap-1.5">
+              <Label htmlFor="endDate">Date fin</Label>
+              <input
+                type="date"
+                name="endDate"
+                value={task.endDate}
+                onChange={handleChange}
+                className="border px-2 py-1 rounded-sm"
+                required
+              />
+            </div>
           </div>
-          <div className="grid flex-1 items-center gap-1.5">
-            <Label htmlFor="endDate">Date fin</Label>
-            <input
-              type="date"
-              name="endDate"
-              value={task.endDate}
-              onChange={handleChange}
-              className="border px-2 py-1 rounded-sm"
-              required
-            />
-          </div>
+          <p className="text-red-500 py-1 text-sm">
+            {correctPeriod &&
+              "La date de fin doit etre superieur a la date de debut"}
+          </p>
         </div>
         <Button type="submit">Modifier</Button>
       </form>
