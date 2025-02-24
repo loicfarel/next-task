@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Select,
   SelectTrigger,
@@ -23,7 +23,7 @@ export default function CategorySelect({
   const [categories, setCategories] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [open, setOpen] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const storedCategories = localStorage.getItem(STORAGE_KEY);
@@ -32,11 +32,13 @@ export default function CategorySelect({
     }
   }, []);
 
+  // Appliquer le focus sur l'input quand on ouvre le menu
   useEffect(() => {
-    if (!open) {
-      setSearchTerm("");
+    if (searchTerm && open) {
+      setTimeout(() => inputRef.current?.focus(), 10);
     }
-  }, [open]);
+    if (!open) setSearchTerm("");
+  }, [open, searchTerm]);
 
   const addCategory = () => {
     if (searchTerm && !categories.includes(searchTerm)) {
@@ -48,10 +50,10 @@ export default function CategorySelect({
         onChange(searchTerm); // Sélectionner la nouvelle catégorie
       }, 50);
       setSearchTerm("");
+      setOpen(false);
     }
   };
 
-  // Filtrer les catégories en fonction de la recherche
   const filteredCategories = categories.filter((cat) =>
     cat.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -61,9 +63,7 @@ export default function CategorySelect({
       value={value}
       onValueChange={onChange}
       open={open}
-      onOpenChange={(isOpen) => {
-        if (!isTyping) setOpen(isOpen);
-      }} // Ne ferme pas si on tape dans l'input
+      onOpenChange={setOpen}
     >
       <SelectTrigger className="w-full">
         <SelectValue placeholder="Choisir une catégorie" />
@@ -71,14 +71,11 @@ export default function CategorySelect({
       <SelectContent>
         <div className="p-2">
           <Input
+            ref={inputRef}
             type="text"
             placeholder="Rechercher ou ajouter une catégorie..."
             value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-            }}
-            onBlur={() => setIsTyping(false)} // Remet à false quand on quitte l'input
-            autoFocus
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         {filteredCategories.length > 0 ? (
