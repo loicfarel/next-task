@@ -14,6 +14,7 @@ import CategorySelect from "@/app/components/CategorySelect";
 export default function CreateTask() {
   const { addTask } = useTasks();
   const [correctPeriod, setCorrectPeriod] = useState(false);
+  const [isSelectedCategory, setIsSelectedCategory] = useState(false);
   const router = useRouter();
 
   const [task, setTask] = useState({
@@ -37,7 +38,10 @@ export default function CreateTask() {
       setCorrectPeriod(true);
       return;
     }
-    if (!task.title || !task.content) return;
+    if (!task.title || !task.category) {
+      setIsSelectedCategory(true);
+      return;
+    }
 
     addTask({
       ...task,
@@ -66,6 +70,11 @@ export default function CreateTask() {
             value={task.category}
             onChange={(category) => setTask({ ...task, category })}
           />
+          {isSelectedCategory && (
+            <p className="text-red-500 py-1 text-sm">
+              Veuillez choisir une catégorie
+            </p>
+          )}
         </div>
 
         <div className="grid w-full  items-center gap-1.5">

@@ -64,6 +64,7 @@ export default function CategorySelect({
       onValueChange={onChange}
       open={open}
       onOpenChange={setOpen}
+      required
     >
       <SelectTrigger className="w-full">
         <SelectValue placeholder="Choisir une catégorie" />
