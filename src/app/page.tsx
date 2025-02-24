@@ -26,9 +26,9 @@ export default function Home() {
         </Link>
       </div>
       {tasks.length > 0 ? (
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid md:grid-cols-4 grid-cols w-full gap-4">
           {tasks.map((task) => (
-            <Card key={task.id}>
+            <Card className="w-full" key={task.id}>
               <CardHeader>
                 <CardTitle>
                   {task.title}
